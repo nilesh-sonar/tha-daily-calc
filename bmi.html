@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BMI Calculator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #0a0f2c, #02040f);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+      animation: twinkle 30s linear infinite;
+      opacity: 0.2;
+    }
+
+    @keyframes twinkle {
+      from { transform: translate(0, 0); }
+      to { transform: translate(-200px, -200px); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+      width: 370px;
+      transition: all 0.4s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
+      transform: translateY(-4px);
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      font-weight: 600;
+      color: #00eaff;
+      text-shadow: 0 0 10px rgba(0, 234, 255, 0.6);
+    }
+
+    input {
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      margin-bottom: 15px;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      background: rgba(255,255,255,0.25);
+    }
+
+    button {
+      padding: 10px 25px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #0072ff, #00c6ff);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 183, 255, 0.7);
+    }
+
+    .result {
+      margin-top: 25px;
+      font-size: 18px;
+      color: #fff;
+      text-shadow: 0 0 5px rgba(0,255,255,0.5);
+    }
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 16px;
+      color: #00ffcc;
+    }
+
+    .status.normal {
+      color: #00ff99;
+    }
+    .status.under {
+      color: #00bfff;
+    }
+    .status.over {
+      color: #ffaa00;
+    }
+    .status.obese {
+      color: #ff4b4b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BMI Calculator</h1>
+    <input type="number" id="weight" placeholder="Enter weight (kg)" />
+    <input type="number" id="height" placeholder="Enter height (cm)" />
+    <button onclick="calculateBMI()">Calculate</button>
+    <div class="result" id="result"></div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    function calculateBMI() {
+      const weight = parseFloat(document.getElementById("weight").value);
+      const height = parseFloat(document.getElementById("height").value);
+      const result = document.getElementById("result");
+      const status = document.getElementById("status");
+
+      if (!weight || !height || weight <= 0 || height <= 0) {
+        result.textContent = "Please enter valid height and weight.";
+        status.textContent = "";
+        return;
+      }
+
+      const heightM = height / 100; // convert cm to meters
+      const bmi = weight / (heightM * heightM);
+
+      result.textContent = `Your BMI is ${bmi.toFixed(1)}`;
+
+      let category = "";
+      let statusClass = "";
+
+      if (bmi < 18.5) {
+        category = "Underweight";
+        statusClass = "under";
+      } else if (bmi < 25) {
+        category = "Normal";
+        statusClass = "normal";
+      } else if (bmi < 30) {
+        category = "Overweight";
+        statusClass = "over";
+      } else {
+        category = "Obese";
+        statusClass = "obese";
+      }
+
+      status.textContent = category;
+      status.className = `status ${statusClass}`;
+    }
+  </script>
+</body>
+</html>
