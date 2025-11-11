@@ -21,8 +21,10 @@
       background: radial-gradient(circle at top, #0a0f2c, #02040f);
       color: #fff;
       overflow: hidden;
+      position: relative;
     }
 
+    /* Background twinkling stars */
     body::before {
       content: "";
       position: absolute;
@@ -38,67 +40,90 @@
       to { transform: translate(-200px, -200px); }
     }
 
+    /* Arc Reactors */
+    .reactor {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00ffff55, #001a1a);
+      box-shadow: 0 0 40px #00ffffaa, inset 0 0 20px #00ffff99;
+      animation: pulse 3s infinite alternate;
+    }
+
+    .reactor.left { left: 5%; top: 50%; transform: translateY(-50%); }
+    .reactor.right { right: 5%; top: 50%; transform: translateY(-50%); }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px #00ffff77, inset 0 0 15px #00ffff55; }
+      100% { box-shadow: 0 0 50px #00ffffcc, inset 0 0 25px #00ffffaa; }
+    }
+
+    /* Main Container */
     .container {
       position: relative;
       z-index: 2;
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 20px;
-      padding: 40px 30px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 35px;
+      padding: 50px 35px;
       text-align: center;
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
-      width: 370px;
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.4);
+      width: 380px;
       transition: all 0.4s ease;
     }
 
     .container:hover {
-      box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
-      transform: translateY(-4px);
+      box-shadow: 0 0 60px rgba(0, 255, 255, 0.7);
+      transform: translateY(-4px) scale(1.02);
     }
 
     h1 {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       font-weight: 600;
       color: #00eaff;
-      text-shadow: 0 0 10px rgba(0, 234, 255, 0.6);
+      text-shadow: 0 0 15px rgba(0, 234, 255, 0.7);
     }
 
     input[type="text"] {
-      padding: 10px;
+      padding: 14px;
       width: 100%;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       outline: none;
-      font-size: 16px;
+      font-size: 18px;
       background: rgba(255,255,255,0.15);
       color: #fff;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       text-align: center;
       transition: 0.3s;
+      box-shadow: inset 0 0 10px #00ffff33;
     }
 
     input[type="text"]:focus {
       background: rgba(255,255,255,0.25);
+      box-shadow: 0 0 10px #00ffff88, inset 0 0 10px #00ffff55;
     }
 
     button {
-      padding: 10px 25px;
+      padding: 12px 30px;
       background: linear-gradient(90deg, #00c6ff, #0072ff);
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
       color: white;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 600;
       letter-spacing: 0.5px;
       transition: 0.3s;
+      box-shadow: 0 0 15px rgba(0, 183, 255, 0.5);
     }
 
     button:hover {
       background: linear-gradient(90deg, #0072ff, #00c6ff);
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0, 183, 255, 0.7);
+      transform: scale(1.07);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
     }
 
     .result {
@@ -109,23 +134,26 @@
     }
 
     .moon {
-      font-size: 60px;
+      font-size: 70px;
       margin-top: 20px;
       transition: 0.5s;
     }
 
     .moon.glow {
-      text-shadow: 0 0 25px rgba(255, 255, 200, 0.8);
+      text-shadow: 0 0 35px rgba(255, 255, 200, 0.8);
       animation: glowPulse 3s infinite alternate ease-in-out;
     }
 
     @keyframes glowPulse {
-      from { text-shadow: 0 0 15px rgba(255, 255, 200, 0.5); }
-      to { text-shadow: 0 0 35px rgba(255, 255, 200, 1); }
+      from { text-shadow: 0 0 20px rgba(255, 255, 200, 0.6); }
+      to { text-shadow: 0 0 50px rgba(255, 255, 200, 1); }
     }
   </style>
 </head>
 <body>
+  <div class="reactor left"></div>
+  <div class="reactor right"></div>
+
   <div class="container">
     <h1>Age & Moon Phase</h1>
     <input type="text" id="dob" placeholder="Enter DOB (DD/MM/YYYY)">
@@ -140,7 +168,6 @@
       const result = document.getElementById('result');
       const moonDiv = document.getElementById('moon');
 
-      // Expecting format DD/MM/YYYY
       const parts = dobInput.split('/');
       if (parts.length !== 3) {
         result.textContent = "Please enter date as DD/MM/YYYY.";
@@ -161,7 +188,6 @@
 
       const today = new Date();
 
-      // --- Age Calculation ---
       let years = today.getFullYear() - birthDate.getFullYear();
       let months = today.getMonth() - birthDate.getMonth();
       let days = today.getDate() - birthDate.getDate();
@@ -178,7 +204,6 @@
 
       result.textContent = `You are ${years} years, ${months} months, and ${days} days old.`;
 
-      // --- Moon Phase Calculation ---
       const knownNewMoon = new Date('2000-01-06T18:14:00Z');
       const diffDays = (birthDate - knownNewMoon) / (1000 * 60 * 60 * 24);
       const moonAge = (diffDays % 29.53 + 29.53) % 29.53;
