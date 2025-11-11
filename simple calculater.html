@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>simple calculater</title>
+  <title>simple Calculator</title>
   <style>
     * {
       box-sizing: border-box;
@@ -15,32 +15,101 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at center, #1a1a1a, #000);
+      background: radial-gradient(circle at center, #0a0a0a, #000);
       font-family: "Consolas", monospace;
       color: #fff;
+      overflow: hidden;
+    }
+
+    /* Glowing rotating energy rings */
+    .energy-ring {
+      position: absolute;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      border: 2px solid #00f2ff33;
+      animation: rotate 10s linear infinite;
+      filter: blur(2px);
+    }
+
+    .energy-ring:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      animation-duration: 12s;
+      border-color: #ff004433;
+    }
+
+    .energy-ring:nth-child(2) {
+      animation-direction: reverse;
+      animation-duration: 14s;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Floating math symbols */
+    .math-symbol {
+      position: absolute;
+      color: rgba(0, 242, 255, 0.2);
+      font-size: 1.5em;
+      user-select: none;
+      pointer-events: none;
+      animation: floatMath 15s linear infinite;
+      text-shadow: 0 0 10px #00f2ff55, 0 0 20px #ff004455;
+    }
+
+    @keyframes floatMath {
+      from {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+      }
     }
 
     .calculator {
-      background: #111;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #00f2ff33;
-      width: 300px;
+      background: rgba(15, 15, 15, 0.95);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00f2ff55, 0 0 50px #ff004455 inset;
+      width: 320px;
+      z-index: 2;
+      position: relative;
     }
 
     #display {
       width: 100%;
-      height: 60px;
+      height: 70px;
       border: none;
       background: #000;
       color: #0ff;
-      font-size: 1.8em;
+      font-size: 2em;
       text-align: right;
       padding: 10px;
-      border-radius: 8px;
-      box-shadow: inset 0 0 10px #00f2ff33;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px #00f2ff66;
       outline: none;
       margin-bottom: 15px;
+      animation: flicker 3s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 24%, 55% {
+        opacity: 0.7;
+      }
     }
 
     .buttons {
@@ -53,18 +122,20 @@
       padding: 15px;
       font-size: 1.2em;
       border: none;
-      border-radius: 8px;
-      background: #222;
+      border-radius: 10px;
+      background: #111;
       color: #0ff;
-      box-shadow: 0 0 5px #00f2ff33;
+      box-shadow: 0 0 10px #00f2ff44;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
     }
 
     button:hover {
       background: #00f2ff;
       color: #000;
-      box-shadow: 0 0 10px #00f2ff;
+      box-shadow: 0 0 20px #00f2ff;
     }
 
     .operator {
@@ -98,10 +169,30 @@
       background: #ffcc00;
       color: #000;
     }
+
+    /* Floating number animation */
+    .float-num {
+      position: absolute;
+      font-size: 1.5em;
+      color: #00f2ff;
+      opacity: 0.8;
+      animation: floatUp 1s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-40px); opacity: 0; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- Glowing rings -->
+  <div class="energy-ring"></div>
+  <div class="energy-ring"></div>
+
+  <!-- Calculator -->
   <div class="calculator">
     <input type="text" id="display" readonly>
     <div class="buttons">
@@ -136,6 +227,7 @@
 
     function appendValue(value) {
       display.value += value;
+      createFloatEffect(value);
     }
 
     function clearDisplay() {
@@ -148,10 +240,32 @@
 
     function calculateResult() {
       try {
-        display.value = eval(display.value);
+        const result = eval(display.value);
+        pulseGlow();
+        display.value = result;
       } catch {
         display.value = "Error";
       }
+    }
+
+    function createFloatEffect(value) {
+      const float = document.createElement("div");
+      float.className = "float-num";
+      float.textContent = value;
+      document.body.appendChild(float);
+
+      const rect = event.target.getBoundingClientRect();
+      float.style.left = rect.left + rect.width / 2 + "px";
+      float.style.top = rect.top + "px";
+
+      setTimeout(() => float.remove(), 1000);
+    }
+
+    function pulseGlow() {
+      display.style.boxShadow = "0 0 25px #ff0044, 0 0 40px #00f2ff";
+      setTimeout(() => {
+        display.style.boxShadow = "inset 0 0 10px #00f2ff66";
+      }, 500);
     }
 
     // Keyboard support
@@ -168,9 +282,19 @@
         clearDisplay();
       }
     });
+
+    // Generate random floating math symbols
+    const symbols = ["π", "Σ", "√", "∫", "∞", "Δ", "x²", "θ", "≈", "≠", "+", "÷", "×", "%", "∂"];
+    for (let i = 0; i < 20; i++) {
+      const sym = document.createElement("div");
+      sym.className = "math-symbol";
+      sym.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      sym.style.left = Math.random() * 100 + "vw";
+      sym.style.animationDelay = Math.random() * 10 + "s";
+      sym.style.fontSize = (Math.random() * 1.5 + 1) + "em";
+      document.body.appendChild(sym);
+    }
   </script>
 
 </body>
-
 </html>
-
