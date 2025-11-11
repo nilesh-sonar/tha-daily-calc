@@ -21,6 +21,7 @@
       background: radial-gradient(circle at top, #0a0f2c, #02040f);
       color: #fff;
       overflow: hidden;
+      position: relative;
     }
 
     body::before {
@@ -65,10 +66,10 @@
     }
 
     input {
-      padding: 10px;
+      padding: 12px;
       width: 100%;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       outline: none;
       font-size: 16px;
       background: rgba(255,255,255,0.15);
@@ -76,33 +77,36 @@
       margin-bottom: 15px;
       text-align: center;
       transition: 0.3s;
+      box-shadow: inset 0 0 10px #00ffff33;
     }
 
     input:focus {
       background: rgba(255,255,255,0.25);
+      box-shadow: 0 0 10px #00ffff88, inset 0 0 10px #00ffff55;
     }
 
     button {
-      padding: 10px 25px;
+      padding: 12px 30px;
       background: linear-gradient(90deg, #00c6ff, #0072ff);
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       color: white;
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.5px;
       transition: 0.3s;
+      box-shadow: 0 0 15px rgba(0, 183, 255, 0.5);
     }
 
     button:hover {
       background: linear-gradient(90deg, #0072ff, #00c6ff);
       transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0, 183, 255, 0.7);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
     }
 
     .result {
-      margin-top: 25px;
+      margin-top: 20px;
       font-size: 18px;
       color: #fff;
       text-shadow: 0 0 5px rgba(0,255,255,0.5);
@@ -113,20 +117,23 @@
       font-weight: bold;
       text-transform: uppercase;
       font-size: 16px;
-      color: #00ffcc;
     }
 
-    .status.normal {
-      color: #00ff99;
+    .status.normal { color: #00ff99; }
+    .status.under { color: #00bfff; }
+    .status.over { color: #ffaa00; }
+    .status.obese { color: #ff4b4b; }
+
+    .icon {
+      margin-top: 15px;
+      font-size: 50px;
+      transition: transform 0.3s;
     }
-    .status.under {
-      color: #00bfff;
-    }
-    .status.over {
-      color: #ffaa00;
-    }
-    .status.obese {
-      color: #ff4b4b;
+
+    .icon img {
+      width: 50px;
+      height: 50px;
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -138,6 +145,7 @@
     <button onclick="calculateBMI()">Calculate</button>
     <div class="result" id="result"></div>
     <div class="status" id="status"></div>
+    <div class="icon" id="icon"></div>
   </div>
 
   <script>
@@ -146,37 +154,49 @@
       const height = parseFloat(document.getElementById("height").value);
       const result = document.getElementById("result");
       const status = document.getElementById("status");
+      const iconDiv = document.getElementById("icon");
 
       if (!weight || !height || weight <= 0 || height <= 0) {
         result.textContent = "Please enter valid height and weight.";
         status.textContent = "";
+        iconDiv.innerHTML = "";
         return;
       }
 
-      const heightM = height / 100; // convert cm to meters
+      const heightM = height / 100;
       const bmi = weight / (heightM * heightM);
-
       result.textContent = `Your BMI is ${bmi.toFixed(1)}`;
 
       let category = "";
       let statusClass = "";
+      let emojiIcon = "";
+      let svgIcon = "";
 
       if (bmi < 18.5) {
         category = "Underweight";
         statusClass = "under";
+        emojiIcon = "🏃‍♂️";
+        svgIcon = `<img src="https://img.icons8.com/ios-filled/50/00bfff/running.png"/>`;
       } else if (bmi < 25) {
         category = "Normal";
         statusClass = "normal";
+        emojiIcon = "💪";
+        svgIcon = `<img src="https://img.icons8.com/ios-filled/50/00ff99/dumbbell.png"/>`;
       } else if (bmi < 30) {
         category = "Overweight";
         statusClass = "over";
+        emojiIcon = "❤️";
+        svgIcon = `<img src="https://img.icons8.com/ios-filled/50/ffaa00/heart-health.png"/>`;
       } else {
         category = "Obese";
         statusClass = "obese";
+        emojiIcon = "⚠️";
+        svgIcon = `<img src="https://img.icons8.com/ios-filled/50/ff4b4b/error.png"/>`;
       }
 
       status.textContent = category;
       status.className = `status ${statusClass}`;
+      iconDiv.innerHTML = `${emojiIcon} ${svgIcon}`;
     }
   </script>
 </body>
